@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Kalkulator</string>
+    <string name="Title_ActivityMain">Kalkulator</string>
+    <string name="Dialogue_ExitQuestion">Czy chcesz wyjść?</string>
+    <string name="Yes">Tak</string>
+    <string name="No">Nie</string>
+    <string name="Options_UseDarkTheme">Użyj ciemnego motywu</string>
+    <string name="ChangeLanguage">Zmień język</string>
+    <string name="UseLanguageEnglish">Angielski</string>
+    <string name="UseLanguagePolish">Polski</string>
+    <string name="Menu_Exit">Wyjście</string>
+    <string name="Title_ActivityOptions">Opcje</string>
+    <string name="Toast_InvalidOperation">Niepoprawna operacja!</string>
+    <string name="MenuRestoreDefaults">Przywróć domyślne</string>
+    <string name="DefaultsRestored">Domyślne ustawienia przywrócone.</string>
+    <string name="Title_ActivityHistory">Historia</string>
+    <string name="Menu_AboutAuthor">O autorze</string>
+    <string name="Author">Autor:</string>
+    <string name="Options_LightTheme">Jasny</string>
+    <string name="Options_DarkTheme">Ciemny</string>
+    <string name="Options_DefaultTheme">Domyślny</string>
+    <string name="Options_BlackTheme">Czarny</string>
+    <string name="Options_Theme">Motyw Aplikacji</string>
+    <string name="Options_Look">Wygląd aplikacji</string>
+    <string name="Memory_Saved">"Zapisano w pamięci"</string>
+    <string name="Memory_Cleared">Wyczyszczono pamięć</string>
+    <string name="Memory_CannotSet">Operacja niepoprawna, nie można wpisac do pamięci!</string>
+    <string name="Memory_Empty">Pamięc jest pusta!</string>
+    <string name="Memory_CannotPaste">Nie można teraz wkleic z pamięci!</string>
+    <string name="Menu_ClearHistory">Wyczyść</string>
+    <string name="Dialogue_ClearHistory">Wyczyścić historię?</string>
+    <string name="Dialogue_ConfirmOperation">Potwierdź operację</string>
+    <string name="History_Cleared">Historia wyczyszczona</string>
+    <string name="History_empty">(Historia jest pusta)</string>
+</resources>

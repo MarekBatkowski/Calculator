@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Calculator</string>
+    <string name="Title_ActivityMain">Calculator</string>
+    <string name="Title_ActivityOptions">Options</string>
+    <string name="Title_ActivityHistory">History</string>
+    <string name="Dialogue_ExitQuestion">Do you want to exit?</string>
+    <string name="Yes">Yes</string>
+    <string name="No">No</string>
+    <string name="Dialogue_GithubLink" translatable="false"><a href="https://github.com/MarekBatkowski"> Github </a></string>
+    <string name="UseLanguagePolish">Polish</string>
+    <string name="UseLanguageEnglish">English</string>
+    <string name="Menu_Exit">Exit</string>
+    <string name="Toast_InvalidOperation">Invalid operation!</string>
+    <string name="MenuRestoreDefaults">Restore default</string>
+    <string name="DefaultsRestored">Default settings restored.</string>
+    <string name="Menu_AboutAuthor">About author</string>
+    <string name="Author">Author:</string>
+    <string name="Options_UseDarkTheme">Use dark theme</string>
+    <string name="Options_DefaultTheme">Default</string>
+    <string name="Options_LightTheme">Light</string>
+    <string name="Options_DarkTheme">Dark</string>
+    <string name="Options_BlackTheme">Black</string>
+    <string name="ChangeLanguage">Change language</string>
+    <string name="Options_Theme">Application Theme</string>
+    <string name="Options_Look">Application look</string>
+    <string name="Memory_Saved">Saved to memory</string>
+    <string name="Memory_Cleared">Cleared memory</string>
+    <string name="Memory_CannotSet">Operation Invalid, cannot set to memory!</string>
+    <string name="Memory_CannotPaste">Cannot paste from memory now!</string>
+    <string name="Memory_Empty">Memory is Empty!</string>
+    <string name="Menu_ClearHistory">Clear</string>
+    <string name="Dialogue_ClearHistory">Clear History?</string>
+    <string name="Dialogue_ConfirmOperation">Confirm operation</string>
+    <string name="History_Cleared">History cleared</string>
+    <string name="History_empty">(History is empty)</string>
+</resources>

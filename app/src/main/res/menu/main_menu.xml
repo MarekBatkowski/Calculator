@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/Menu_History"
+        android:title="@string/Title_ActivityHistory"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/Menu_Options"
+        android:title="@string/Title_ActivityOptions" />
+    <item
+        android:id="@+id/Menu_AboutAuthor"
+        android:title="@string/Menu_AboutAuthor" />
+    <item
+        android:id="@+id/Menu_Exit"
+        android:title="@string/Menu_Exit" />
+</menu>

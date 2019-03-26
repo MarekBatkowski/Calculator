@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3f51b5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#536dfe</color>
+    <color name="Transparent">#00808080</color>
+    <color name="ButtonTransparent">#20808080</color>
+    <color name="ButtonTransparentPressed">#60808080</color>
+    <color name="ButtonTransparentLess">#30808080</color>
+    <color name="LightGrey">#cccccc</color>
+    <color name="VeryLightGrey">#e0e0e0</color>
+    <color name="DarkGrey">#202020</color>
+    <color name="MediumGrey">#60808080</color>
+</resources>
