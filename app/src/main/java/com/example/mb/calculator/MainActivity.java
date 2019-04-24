@@ -1,7 +1,7 @@
 package com.example.mb.calculator;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,6 +11,7 @@ import android.os.Bundle;
 
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -101,10 +102,10 @@ public class MainActivity extends AppCompatActivity
     {
         preferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
         String ThemeName = preferences.getString(PREFERENCES_THEME, "Default");
-        if (ThemeName.equals("Default")) setTheme(R.style.DefaultTheme);
-        if (ThemeName.equals("Light")) setTheme(R.style.LightTheme);
-        if (ThemeName.equals("Dark")) setTheme(R.style.DarkTheme);
-        if (ThemeName.equals("Black")) setTheme(R.style.BlackTheme);
+        if (ThemeName.equals("Default"))    setTheme(R.style.DefaultTheme);
+        if (ThemeName.equals("Light"))      setTheme(R.style.LightTheme);
+        if (ThemeName.equals("Dark"))       setTheme(R.style.DarkTheme);
+        if (ThemeName.equals("Black"))      setTheme(R.style.BlackTheme);
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -119,6 +120,8 @@ public class MainActivity extends AppCompatActivity
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         memory = null;
 
@@ -331,9 +334,9 @@ public class MainActivity extends AppCompatActivity
                     public void onClick(DialogInterface dialog, int which){}
                 });
 
-                AlertDialog About = builder2.create();
-                About.show();
-                TextView Github = ((TextView) About.findViewById(R.id.GithubText));
+                builder2.show();
+
+                TextView Github = ((TextView) view.findViewById(R.id.GithubText));
                 Github.setOnClickListener(new View.OnClickListener()
                 {
                     @Override
@@ -360,6 +363,22 @@ public class MainActivity extends AppCompatActivity
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState)
+    {
+        super.onSaveInstanceState(outState);
+        outState.putString("Operation", OperationField.getText().toString());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState)
+    {
+        super.onRestoreInstanceState(savedInstanceState);
+        String Operation = savedInstanceState.getString("Operation");
+        OperationField.setText(Operation);
+        updateResult(OperationField, ResultField);
     }
 }
 

@@ -1,12 +1,13 @@
 package com.example.mb.calculator;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import android.content.SharedPreferences;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -18,7 +19,6 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -40,10 +40,10 @@ public class HistoryActivity extends AppCompatActivity
     {
         preferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
         String ThemeName = preferences.getString(PREFERENCES_THEME, "Default");
-        if (ThemeName.equals("Default")) setTheme(R.style.DefaultTheme);
-        if (ThemeName.equals("Light")) setTheme(R.style.LightTheme);
-        if (ThemeName.equals("Dark")) setTheme(R.style.DarkTheme);
-        if (ThemeName.equals("Black")) setTheme(R.style.BlackTheme);
+        if (ThemeName.equals("Default"))    setTheme(R.style.DefaultTheme);
+        if (ThemeName.equals("Light"))      setTheme(R.style.LightTheme);
+        if (ThemeName.equals("Dark"))       setTheme(R.style.DarkTheme);
+        if (ThemeName.equals("Black"))      setTheme(R.style.BlackTheme);
     }
 
     @Override
@@ -55,6 +55,20 @@ public class HistoryActivity extends AppCompatActivity
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                startActivity(new Intent(getApplicationContext(),MainActivity.class));
+            }
+        });
 
         String json = getIntent().getStringExtra("operationsHistory");
         Gson gson = new Gson();
@@ -69,6 +83,7 @@ public class HistoryActivity extends AppCompatActivity
         historyList = findViewById(R.id.historyList);
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(HistoryActivity.this, android.R.layout.simple_list_item_1, operationsHistory);
         historyList.setAdapter(arrayAdapter);
+
         historyList.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             @Override

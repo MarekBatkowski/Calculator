@@ -8,7 +8,7 @@
     <color name="ButtonTransparentPressed">#60808080</color>
     <color name="ButtonTransparentLess">#30808080</color>
     <color name="LightGrey">#cccccc</color>
-    <color name="VeryLightGrey">#e0e0e0</color>
+    <color name="VeryLightGrey">#f0f0f0</color>
     <color name="DarkGrey">#202020</color>
     <color name="MediumGrey">#60808080</color>
 </resources>

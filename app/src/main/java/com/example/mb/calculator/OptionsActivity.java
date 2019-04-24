@@ -1,8 +1,10 @@
 package com.example.mb.calculator;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -10,6 +12,8 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.Toast;
+
+import static com.example.mb.calculator.R.color.colorAccent;
 
 public class OptionsActivity extends AppCompatActivity
 {
@@ -30,16 +34,17 @@ public class OptionsActivity extends AppCompatActivity
         editor.putString(PREFERENCES_THEME, ThemeName);
         editor.commit();
         OptionsActivity.this.recreate();
+    //    OptionsActivity.this.getParent().recreate();
     }
 
     private void loadTheme(SharedPreferences preferences)
     {
         preferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
         String ThemeName = preferences.getString(PREFERENCES_THEME, "Default");
-        if (ThemeName.equals("Default")) setTheme(R.style.DefaultTheme);
-        if (ThemeName.equals("Light")) setTheme(R.style.LightTheme);
-        if (ThemeName.equals("Dark")) setTheme(R.style.DarkTheme);
-        if (ThemeName.equals("Black")) setTheme(R.style.BlackTheme);
+        if (ThemeName.equals("Default"))    setTheme(R.style.DefaultTheme);
+        if (ThemeName.equals("Light"))      setTheme(R.style.LightTheme);
+        if (ThemeName.equals("Dark"))       setTheme(R.style.DarkTheme);
+        if (ThemeName.equals("Black"))      setTheme(R.style.BlackTheme);
     }
 
     @Override
@@ -51,6 +56,20 @@ public class OptionsActivity extends AppCompatActivity
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_options);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                startActivity(new Intent(getApplicationContext(),MainActivity.class));
+            }
+        });
 
         RadioThemeDefault = findViewById(R.id.Radio_ThemeDefault);
         RadioThemeLight = findViewById(R.id.Radio_ThemeLight);
