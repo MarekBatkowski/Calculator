@@ -33,4 +33,7 @@
     <string name="Dialogue_ConfirmOperation">Potwierdź operację</string>
     <string name="History_Cleared">Historia wyczyszczona</string>
     <string name="History_empty">(Historia jest pusta)</string>
+    <string name="Options_Vibrations">Wibracje</string>
+    <string name="Options_EnableVibrations">Włącz wibracje</string>
+    <string name="Options_VibrationLength">Długość wibracji: </string>
 </resources>

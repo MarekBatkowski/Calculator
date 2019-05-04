@@ -20,15 +20,14 @@
         android:orientation="vertical"
         android:layout_weight="2">
 
-        <TextView
+        <EditText
             android:id="@+id/OperationField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:maxLines="1"
-            android:textIsSelectable="true"
+            android:inputType="textPersonName"
             android:ems="10"
-            android:inputType="none"
+            android:maxLines="1"
             android:textAlignment="textEnd"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="45sp" />
@@ -38,10 +37,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="2"
+            android:inputType="none"
+            android:ems="10"
             android:maxLines="1"
             android:textIsSelectable="true"
-            android:ems="10"
-            android:inputType="none"
             android:textAlignment="textEnd"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="45sp" />

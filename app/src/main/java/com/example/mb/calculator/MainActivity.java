@@ -1,11 +1,14 @@
 package com.example.mb.calculator;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
+import android.content.Context;
+import android.os.Build;
+import android.os.Vibrator;
 import android.support.v7.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Path;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -16,9 +19,10 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,18 +36,21 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
 {
-    private static final String PREFERENCES_NAME = "Preferences";
-    private static final String PREFERENCES_THEME = "theme";
-    //  private static final String PREFERENCES_LANGUAGE = "language";
-    private static final String HISTORY = "history";
+    SharedPreferences.OnSharedPreferenceChangeListener listener;
 
+    private SharedPreferences preferences;
+    private SharedPreferences.Editor editor;
+
+    private String ThemeName;
     private ArrayList<String> operationsHistory;
-    private String currentOperation;
     private String memory;
+    private Vibrator vib;
 
     private Button ButtonC, Delete, Equals, ButtonMS, ButtonMR, ButtonMC, ButtonChangeSign;
-    private TextView OperationField;
+    private EditText OperationField;
     private TextView ResultField;
+    private Boolean VibState;
+    private int VibLenght;
 
     private String getContextRegEx(String currChar)
     {
@@ -58,9 +65,8 @@ public class MainActivity extends AppCompatActivity
 
     public void onClick(View view)
     {
-
+        if(VibState)    vib.vibrate(VibLenght);
         String currChar = view.getTag().toString();
-        String Operation = OperationField.getText().toString();
         /*
         if (Operation.length()==0 || Operation.matches(getContextRegEx(currChar)))
         {
@@ -70,8 +76,9 @@ public class MainActivity extends AppCompatActivity
         }
         else    Toast.makeText(MainActivity.this, "last char doesnt match "+getContextRegEx(currChar), Toast.LENGTH_SHORT).show();
         */
-        OperationField.append(currChar);
-        updateResult(OperationField, ResultField);
+
+        OperationField.getText().insert(OperationField.getSelectionStart(), currChar);
+        updateResult();
     }
 
     private String formatString(double d)
@@ -87,7 +94,7 @@ public class MainActivity extends AppCompatActivity
         return formatString(new Expression(expressionText).calculate());
     }
 
-    private void updateResult(TextView OperationField, TextView ResultField)
+    private void updateResult()
     {
         String expressionText = OperationField.getText().toString();
         String result = getResult(expressionText);
@@ -98,49 +105,46 @@ public class MainActivity extends AppCompatActivity
             ResultField.setText("");
     }
 
-    private void loadTheme(SharedPreferences preferences)
+    private void loadTheme()
     {
-        preferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
-        String ThemeName = preferences.getString(PREFERENCES_THEME, "Default");
+        String ThemeName = preferences.getString(SPSingleton.PREFERENCES_THEME, "Default");
         if (ThemeName.equals("Default"))    setTheme(R.style.DefaultTheme);
         if (ThemeName.equals("Light"))      setTheme(R.style.LightTheme);
         if (ThemeName.equals("Dark"))       setTheme(R.style.DarkTheme);
         if (ThemeName.equals("Black"))      setTheme(R.style.BlackTheme);
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-        SharedPreferences preferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
-        String json = preferences.getString(HISTORY, "[]");
+        preferences = SPSingleton.getInstance(MainActivity.this).getPreferences();
+        editor = SPSingleton.getInstance(MainActivity.this).getEditor();
+        vib = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        loadTheme();
+
+        ThemeName = preferences.getString(SPSingleton.PREFERENCES_THEME, "Default");
+
+        String json = preferences.getString(SPSingleton.PREFERENCES_HISTORY, "[]");
         Type type = new TypeToken<ArrayList<String>>() {}.getType();
         operationsHistory =  new Gson().fromJson(json, type);
-        loadTheme(preferences);
+
+        VibState = preferences.getBoolean(SPSingleton.PREFERENCES_VIBRATION, true);
+        VibLenght = preferences.getInt(SPSingleton.PREFERENCES_VIBRATION_LENGTH, 10);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         memory = null;
 
         OperationField = findViewById(R.id.OperationField);
         ResultField = findViewById(R.id.ResultField);
-
-        OperationField.setOnTouchListener(new View.OnTouchListener(){
-            @Override
-            public boolean onTouch(View v, MotionEvent event){
-                return true;
-            }
-        });
-
-        ResultField.setOnTouchListener(new View.OnTouchListener(){
-            @Override
-            public boolean onTouch(View v, MotionEvent event){
-                return true;
-            }
-        });
+        OperationField.setShowSoftInputOnFocus(false);
 
         ButtonMS = findViewById(R.id.ButtonMemoryStore);
         ButtonMR = findViewById(R.id.ButtonMemoryRead);
@@ -155,14 +159,20 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
+
                 String expressionText = OperationField.getText().toString();
                 String result = getResult(expressionText);
                 if (!result.equals("NaN"))
                 {
                     memory = expressionText;
                     Toast.makeText(MainActivity.this, R.string.Memory_Saved, Toast.LENGTH_SHORT).show();
+                    if(VibState)    vib.vibrate(VibLenght);
                 }
-                else    Toast.makeText(MainActivity.this, R.string.Memory_CannotSet, Toast.LENGTH_SHORT).show();
+                else
+                {
+                    Toast.makeText(MainActivity.this, R.string.Memory_CannotSet, Toast.LENGTH_SHORT).show();
+                    if(VibState)    vib.vibrate(VibLenght+100);
+                }
             }
         });
 
@@ -175,12 +185,21 @@ public class MainActivity extends AppCompatActivity
                 {
                     if (OperationField.getText().toString().matches(".*[\\+\\-x/]$"))
                     {
-                        updateResult(OperationField, ResultField);
+                        updateResult();
                         OperationField.append(memory);
+                        if(VibState)    vib.vibrate(VibLenght);
                     }
-                    else    Toast.makeText(MainActivity.this, R.string.Memory_CannotPaste, Toast.LENGTH_SHORT).show(); // operation must end with +,-,*,/ to paste
+                    else
+                    {
+                        Toast.makeText(MainActivity.this, R.string.Memory_CannotPaste, Toast.LENGTH_SHORT).show(); // operation must end with +,-,*,/ to paste
+                        if(VibState)    vib.vibrate(VibLenght+100);
+                    }
                 }
-                else    Toast.makeText(MainActivity.this, R.string.Memory_Empty, Toast.LENGTH_SHORT).show();
+                else
+                {
+                    Toast.makeText(MainActivity.this, R.string.Memory_Empty, Toast.LENGTH_SHORT).show();
+                    if(VibState)    vib.vibrate(VibLenght+100);
+                }
             }
         });
 
@@ -191,6 +210,7 @@ public class MainActivity extends AppCompatActivity
             {
                 memory = null;
                 Toast.makeText(MainActivity.this, R.string.Memory_Cleared, Toast.LENGTH_SHORT).show();
+                if(VibState)    vib.vibrate(VibLenght);
             }
         });
 
@@ -199,18 +219,19 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
+                if(VibState)    vib.vibrate(VibLenght);
                 String temp = OperationField.getText().toString();
                 if (temp.startsWith("-(") && temp.endsWith(")"))
                 {   //  it already is "-(<some expression>)"
                     temp = temp.substring(2);                       // remove "-("
                     temp = temp.substring(0, temp.length() - 1);    // remove ")"
                     OperationField.setText(temp);
-                    updateResult(OperationField, ResultField);
+                    updateResult();
                 }
                 else
                 {
                     OperationField.setText("-(" + OperationField.getText() + ")");
-                    updateResult(OperationField, ResultField);
+                    updateResult();
                 }
             }
         });
@@ -220,6 +241,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
+                if(VibState)    vib.vibrate(VibLenght);
                 OperationField.setText("");
                 ResultField.setText("");
             }
@@ -230,16 +252,29 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
-                String text = OperationField.getText().toString();
-                if (text.length() > 1)
+                if(VibState)    vib.vibrate(VibLenght);
+
+                int selectionStart=OperationField.getSelectionStart();
+                int selectionEnd=OperationField.getSelectionEnd();
+                String inputString=OperationField.getText().toString();
+
+                String selectedText = inputString.substring(selectionStart, selectionEnd);
+
+                if(!selectedText.isEmpty())
                 {
-                    OperationField.setText(text.substring(0, text.length() - 1));
-                    updateResult(OperationField, ResultField);
+                    String selectionDeletedString=inputString.replace(selectedText,"");
+                    OperationField.setText(selectionDeletedString);
+                    OperationField.setSelection(selectionStart);
+                    updateResult();
                 }
                 else
                 {
-                    OperationField.setText("");
-                    ResultField.setText("");
+                    int cursorPos = OperationField.getSelectionStart();
+                    if (cursorPos > 0)
+                    {
+                        OperationField.getText().delete(cursorPos - 1, cursorPos).toString();
+                        updateResult();
+                    }
                 }
             }
         });
@@ -254,18 +289,21 @@ public class MainActivity extends AppCompatActivity
                 String result = getResult(expressionText);
                 if (!result.equals("NaN"))
                 {
+                    if(VibState)    vib.vibrate(VibLenght);
                     operationsHistory.add(OperationField.getText().toString());                         //add to History
-                    SharedPreferences preferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
-                    SharedPreferences.Editor editor = preferences.edit();
+
                     Gson gson = new Gson();
                     String json = gson.toJson(operationsHistory);
-                    editor.putString(HISTORY, json);
-                    editor.apply();
+                    editor.putString(SPSingleton.PREFERENCES_HISTORY, json).apply();
 
                     OperationField.setText(result);
                     ResultField.setText("");
                 }
-                else    Toast.makeText(MainActivity.this, R.string.Toast_InvalidOperation, Toast.LENGTH_SHORT).show();
+                else
+                {
+                    Toast.makeText(MainActivity.this, R.string.Toast_InvalidOperation, Toast.LENGTH_SHORT).show();
+                    if(VibState)    vib.vibrate(VibLenght+100);
+                }
             }
         });
     }
@@ -277,7 +315,7 @@ public class MainActivity extends AppCompatActivity
         if(requestCode == 1 && resultCode == 1)
         {
             OperationField.setText(data.getStringExtra("operation"));
-            updateResult(OperationField, ResultField);
+            updateResult();
         }
     }
 
@@ -378,7 +416,50 @@ public class MainActivity extends AppCompatActivity
         super.onRestoreInstanceState(savedInstanceState);
         String Operation = savedInstanceState.getString("Operation");
         OperationField.setText(Operation);
-        updateResult(OperationField, ResultField);
+        updateResult();
+    }
+
+
+    @Override
+    protected void onPostResume()
+    {
+        super.onPostResume();
+
+        String CurrThemeName = preferences.getString(SPSingleton.PREFERENCES_THEME, "Default");
+        Boolean CurrVibstate = preferences.getBoolean(SPSingleton.PREFERENCES_VIBRATION, true);
+        int CurrVibLengt = preferences.getInt(SPSingleton.PREFERENCES_VIBRATION_LENGTH, 10);
+
+        String json = SPSingleton.getInstance(MainActivity.this).getPreferences().getString(SPSingleton.PREFERENCES_HISTORY, "[]");
+        Type type = new TypeToken<ArrayList<String>>()
+        {
+        }.getType();
+        ArrayList<String> CurrOperationsHistory = new Gson().fromJson(json, type);
+
+        if (!CurrThemeName.equals(ThemeName) || CurrVibstate != VibState || !(CurrVibLengt == VibLenght) || !CurrOperationsHistory.equals(operationsHistory))
+        {
+            System.out.print("dupa");
+            recreate();
+        }
+    }
+
+
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        editor.putString(SPSingleton.PREFERENCES_OPERATION, OperationField.getText().toString()).apply();
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        if(OperationField.getText().toString()=="")
+        {
+            String Operation = preferences.getString(SPSingleton.PREFERENCES_OPERATION, "");
+            OperationField.setText(Operation);
+            updateResult();
+        }
     }
 }
 

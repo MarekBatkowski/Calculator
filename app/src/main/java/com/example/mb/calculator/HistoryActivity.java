@@ -1,12 +1,12 @@
 package com.example.mb.calculator;
 
+import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import android.content.SharedPreferences;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,20 +26,16 @@ import java.util.Collections;
 
 public class HistoryActivity extends AppCompatActivity
 {
-    private static final String PREFERENCES_NAME = "Preferences";
-    private static final String PREFERENCES_THEME = "theme";
-    //  private static final String PREFERENCES_LANGUAGE = "language";
-    private static final String HISTORY = "history";
+    private SharedPreferences preferences;
+    private SharedPreferences.Editor editor;
 
-    int Language;
     ListView historyList;
 
     private ArrayList<String> operationsHistory;
 
-    private void loadTheme(SharedPreferences preferences)
+    private void loadTheme()
     {
-        preferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
-        String ThemeName = preferences.getString(PREFERENCES_THEME, "Default");
+        String ThemeName = preferences.getString(SPSingleton.PREFERENCES_THEME, "Default");
         if (ThemeName.equals("Default"))    setTheme(R.style.DefaultTheme);
         if (ThemeName.equals("Light"))      setTheme(R.style.LightTheme);
         if (ThemeName.equals("Dark"))       setTheme(R.style.DarkTheme);
@@ -49,9 +45,9 @@ public class HistoryActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-        SharedPreferences preferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
-        //  Language = preferences.getInt(PREFERENCES_LANGUAGE, 0);
-        loadTheme(preferences);
+        preferences = SPSingleton.getInstance(HistoryActivity.this).getPreferences();
+        editor = SPSingleton.getInstance(HistoryActivity.this).getEditor();
+        loadTheme();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
@@ -66,7 +62,7 @@ public class HistoryActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                finish();
             }
         });
 
@@ -74,6 +70,9 @@ public class HistoryActivity extends AppCompatActivity
         Gson gson = new Gson();
         Type type = new TypeToken<ArrayList<String>>() {}.getType();
         operationsHistory = gson.fromJson(json, type);
+
+        if(operationsHistory == null)
+            operationsHistory = new ArrayList<String>();
 
         if(operationsHistory.isEmpty())
             operationsHistory.add(getString(R.string.History_empty));
@@ -125,18 +124,12 @@ public class HistoryActivity extends AppCompatActivity
                     @Override
                     public void onClick(DialogInterface dialog, int which)
                     {
-                        SharedPreferences preferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
-                        SharedPreferences.Editor editor = preferences.edit();
-                        Gson gson = new Gson();
-                        editor.putString(HISTORY, "[]");
-                        editor.apply();
-
-                        ArrayList<String> emptyArray = new ArrayList<String>();
-                        emptyArray.add(getString(R.string.History_empty));
-
-                        ArrayAdapter<String> adapterEmpty = new ArrayAdapter<String>(HistoryActivity.this, android.R.layout.simple_list_item_1, emptyArray);
-                        historyList.setAdapter(adapterEmpty);
+                        editor.putString(SPSingleton.PREFERENCES_HISTORY, "[]").apply();
                         Toast.makeText(HistoryActivity.this, R.string.History_Cleared ,Toast.LENGTH_SHORT).show();
+
+                        Intent intent = new Intent(getApplicationContext(), HistoryActivity.class);
+                        startActivity(intent);
+                        finish();
                     }
                 });
 

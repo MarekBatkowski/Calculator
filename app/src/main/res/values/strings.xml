@@ -34,4 +34,7 @@
     <string name="Dialogue_ConfirmOperation">Confirm operation</string>
     <string name="History_Cleared">History cleared</string>
     <string name="History_empty">(History is empty)</string>
+    <string name="Options_Vibrations">Vibrations</string>
+    <string name="Options_EnableVibrations">Enable vibrations</string>
+    <string name="Options_VibrationLength">Vibration length: </string>
 </resources>
